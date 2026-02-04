@@ -1,0 +1,8 @@
+{
+  "hero": { "title": "Aura" },
+  "essence": { "title": "Essence" },
+  "notes": { "title": "Notes" },
+  "craft": { "title": "Craft" },
+  "bottle": { "title": "Bottle" },
+  "closing": { "title": "Experience" }
+}
