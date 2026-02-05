@@ -9,10 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--color-background) / <alpha-value>)",
-        foreground: "hsl(var(--color-foreground) / <alpha-value>)",
-        muted: "hsl(var(--color-muted) / <alpha-value>)",
-        accent: "hsl(var(--color-accent) / <alpha-value>)",
+        charcoal: '#1C1C1C',
+        gold: '#D4AF37',
+        ivory: '#F8F5F0',
+        rose: '#E6D5C3',
+        plum: '#4B2E39',
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],

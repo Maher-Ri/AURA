@@ -1,42 +1,64 @@
 "use client";
 
-import messagesEn from "@/messages/en.json";
-import messagesAr from "@/messages/ar.json";
-import Footer from "@/components/layout/Footer";
-import Nav from "@/components/layout/Nav";
-import BottleSection from "@/components/sections/BottleSection";
-import CraftSection from "@/components/sections/CraftSection";
-import EssenceSection from "@/components/sections/EssenceSection";
-import ExperienceSection from "@/components/sections/ExperienceSection";
+import { useEffect, useRef, useState } from "react";
+
 import HeroSection from "@/components/sections/HeroSection";
+import EssenceSection from "@/components/sections/EssenceSection";
 import NotesSection from "@/components/sections/NotesSection";
-import { useEffect, useState } from "react";
+import CraftSection from "@/components/sections/CraftSection";
+import BottleSection from "@/components/sections/BottleSection";
+import ExperienceSection from "@/components/sections/ExperienceSection";
+
+const sections = [
+  HeroSection,
+  EssenceSection,
+  NotesSection,
+  CraftSection,
+  BottleSection,
+  ExperienceSection,
+];
 
 export default function HomePage() {
-  const [locale, setLocale] = useState("en");
+  const [index, setIndex] = useState(0);
+  const isLocked = useRef(false);
 
-  // Set locale from browser or default to en
   useEffect(() => {
-    const savedLocale = localStorage.getItem("locale") || "en";
-    setLocale(savedLocale);
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
+      if (isLocked.current) return;
+      isLocked.current = true;
+
+      setIndex((prev) => {
+        if (e.deltaY > 0) return Math.min(prev + 1, sections.length - 1);
+        if (e.deltaY < 0) return Math.max(prev - 1, 0);
+        return prev;
+      });
+
+      // unlock after short delay
+      setTimeout(() => {
+        isLocked.current = false;
+      }, 1500);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
   }, []);
 
-  // Select messages based on locale
-  const messages = locale === "ar" ? messagesAr : messagesEn;
-
-  // Direction for styling if needed
-  const dir = locale === "ar" ? "rtl" : "ltr";
-
   return (
-    <main dir={dir} className="relative w-full h-full font-sans bg-background text-foreground">
-      <Nav locale={locale} />
-      <HeroSection title={messages.hero.title} id="hero" />
-      {/* <EssenceSection title={messages.essence.title} id="essence" />
-      <NotesSection title={messages.notes.title} id="notes" />
-      <CraftSection title={messages.craft.title} id="craft" />
-      <BottleSection title={messages.bottle.title} id="bottle" />
-      <ExperienceSection title={messages.closing.title} id="experience" /> */}
-      <Footer locale={locale} />
+    <main className="relative w-full h-full">
+      {sections.map((Section, i) => (
+        <div
+          key={i}
+          className="absolute inset-0 transition-opacity duration-2000 ease-in-out"
+          style={{
+            opacity: i === index ? 1 : 0,
+            pointerEvents: i === index ? "auto" : "none",
+          }}
+        >
+          <Section isVisible={i === index} />
+        </div>
+      ))}
     </main>
   );
 }
