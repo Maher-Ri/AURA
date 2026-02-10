@@ -1,90 +1,70 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { contentFade } from '@/lib/animations';
+import { type Locale, translations } from '@/lib/i18n';
 
-interface HeroSectionProps {
-  isVisible: boolean; // controlled by parent (page.tsx)
+interface Props {
+  locale: Locale;
 }
 
-export default function HeroSection({ isVisible }: HeroSectionProps) {
+const HeroSection: React.FC<Props> = ({ locale }) => {
+  // Access translations safely
+  const t = translations[locale]?.hero || translations['en'].hero;
+  
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.section
-          key="hero"
-          className="section relative overflow-hidden flex items-end justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5 }}
+    <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden select-none">
+      
+      {/* Background Image with Zoom Effect */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        initial={{ scale: 1.2, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.5 }}
+        transition={{ duration: 2.5, ease: "easeOut" }}
+      >
+        <motion.img 
+          src="/hero-bg.jpg" 
+          alt="Luxury Essence" 
+          className="w-full h-full object-cover"
+        />
+        {/* Gradient Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+      </motion.div>
+
+      {/* Text Content */}
+      <motion.div 
+        variants={contentFade}
+        initial="initial"
+        animate="animate"
+        className="relative z-10 text-center px-6"
+      >
+        <motion.span 
+          initial={{ opacity: 0, letterSpacing: '1em' }}
+          animate={{ opacity: 1, letterSpacing: '0.6em' }}
+          transition={{ duration: 1.5, delay: 0.2 }}
+          className="text-aura-gold text-[10px] md:text-[12px] uppercase block mb-6 font-sans font-bold"
         >
-          <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 0.9, opacity: 0 }} // scale in start
-            animate={{ scale: 1, opacity: 1 }} // scale in on enter
-            exit={{ scale: 0.9, opacity: 0 }} // scale out on exit
-            transition={{ duration: 1, ease: "easeInOut" }}
-            style={{
-              backgroundImage: "url('/hero-bg.png')", // replace with your image path
-              backgroundSize: "cover",
-              backgroundPosition: "bottom center",
-              filter: "brightness(50%)", /* lowers brightness */
-            }}
-          />
+          {t.subtitle}
+        </motion.span>
+        
+        {/* Main Title - Using Playfair (serif) */}
+        <h1 className="text-6xl md:text-[8rem] lg:text-[10rem] font-serif mb-10 text-white leading-[0.9]">
+          {t.title} <span className="italic opacity-80">{t.titleItalic}</span>
+        </h1>
 
-          {/* === Smoke / Spray effect behind perfume === */}
-          {/* <motion.img
-            className="absolute top-1/2 left-1/2 w-72 h-72 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            src="/smoke.jpg"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [0, 0.3, 0], scale: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-          /> */}
-          <h1
-            className="absolute top-[10%] left-1/2 -translate-x-1/2 text-[120px] font-bold text-[#f8f5f0] z-9"
-            style={{
-              textShadow: `
-      0 0 3px #f8f5f0,
-      0 0 5px #f8f5f0,
-      0 0 10px #f8f5f0,
-      0 0 10px #f8f5f0 
-    `,
-            }}
-          >
-            AURA
-          </h1>
-
-          {/* === Floating perfume bottle === */}
-          <motion.div
-            className="absolute bottom-[24%] left-1/2 -translate-x-1/2 w-64 h-96 z-10"
-            initial={{ opacity: 0, y: -50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-          >
-            <Image
-              src="/hero-bottle.png"
-              alt="Aura Perfume"
-              fill
-              className="w-full h-auto object-contain"
-            />
-          </motion.div>
-
-          {/* === Hero content === */}
-          <motion.div
-            className="relative z-20 text-center px-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-          >
-            <p className="mb-22 text-2xl text-[#f8f5f0]">
-              The Essence of Luxury Perfume
-            </p>
-          </motion.div>
-        </motion.section>
-      )}
-    </AnimatePresence>
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row justify-center gap-6 mt-12">
+          <button className="luxury-button luxury-button-primary">
+            {t.collection}
+          </button>
+          <button className="luxury-button luxury-button-outline">
+            {t.film}
+          </button>
+        </div>
+      </motion.div>
+    </div>
   );
-}
+};
+
+export default HeroSection;

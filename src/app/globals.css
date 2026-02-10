@@ -1,75 +1,69 @@
 @import "tailwindcss";
 
-/* ===============================
-   CSS VARIABLES
-================================ */
-:root {
-  --color-charcoal: #1c1c1c;
-  --color-gold: #d4af37;
-  --color-ivory: #f8f5f0;
-  --color-rose: #e6d5c3;
-  --color-plum: #4b2e39;
+@theme {
+  /* 1. Map your custom colors to Tailwind utilities */
+  /* Usage: bg-aura-black, text-aura-gold, etc. */
+  --color-aura-black: #0a0a0a;
+  --color-aura-gold: #c5a059;
+  --color-aura-gold-muted: #8a6d3b;
+  --color-aura-beige: #f5f5f0;
+
+  /* 2. Map the fonts loaded in layout.tsx */
+  /* Usage: font-serif, font-sans */
+  --font-serif: var(--font-playfair), "Playfair Display", serif;
+  --font-sans: var(--font-montserrat), "Montserrat", sans-serif;
 }
 
-/* ===============================
-   BASE RESET
-================================ */
-* {
-  box-sizing: border-box;
+/* Base Styles */
+@layer base {
+  body {
+    background-color: var(--color-aura-black);
+    color: var(--color-aura-beige);
+    font-family: var(--font-sans);
+    overflow: hidden;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* RTL Specific Font Overrides */
+  [dir="rtl"] body {
+    font-family: var(--font-sans); /* Montserrat supports Arabic well */
+  }
+
+  [dir="rtl"] h1, 
+  [dir="rtl"] h2, 
+  [dir="rtl"] h3, 
+  [dir="rtl"] .serif {
+    font-family: var(--font-serif);
+  }
+
+  /* Headings default to serif */
+  h1, h2, h3, .serif {
+    font-family: var(--font-serif);
+  }
 }
 
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  /* background-color: hsl(var(--color-background)); */
-  /* color: hsl(var(--color-foreground)); */
-  /* overflow-x: hidden; */
+/* Component Classes */
+@layer components {
+  /* 
+    In Tailwind 4, we can simply write standard CSS classes.
+    @apply still works if you prefer that syntax.
+  */
+  
+  .luxury-button {
+    @apply px-8 py-3 text-[10px] uppercase tracking-[0.3em] font-bold transition-all duration-500 border border-solid cursor-pointer;
+  }
+  
+  .luxury-button-primary {
+    @apply bg-white text-black border-white hover:bg-transparent hover:text-white;
+  }
+
+  .luxury-button-outline {
+    @apply border-white/20 text-white hover:border-white hover:bg-white hover:text-black;
+  }
 }
 
-/* ===============================
-   SCROLL SYSTEM (CRITICAL)
-================================ */
-
-/* This is the ONLY scrollbar */
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  overflow: hidden; /* completely disable native scroll */
+/* Utilities */
+@utility text-shadow-gold {
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
 }
-
-body::-webkit-scrollbar {
-  display: none;
-}
-
-/* ===============================
-   FIXED VIEWPORT
-================================ */
-.viewport {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ===============================
-   SECTIONS
-================================ */
-.section {
-  position: absolute; /* stack all sections on top of each other */
-  inset: 0; /* top:0; right:0; bottom:0; left:0 */
-  width: 100%;
-  height: 100%;
-  transition:
-    opacity 2s ease,
-    transform 2s ease; /* smooth fade + transform */
-}
-
-/* text only for now */
-/* .section h1 {
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 300;
-  letter-spacing: 0.05em;
-} */

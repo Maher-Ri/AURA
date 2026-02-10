@@ -1,55 +1,86 @@
-"use client"
-import Link from "next/link";
-import messagesEn from "@/messages/en.json";
-import messagesAr from "@/messages/ar.json";
+"use client";
 
-export default function Nav({ locale }: { locale: string }) {
-  const t = locale === "ar" ? messagesAr : messagesEn;
+import React from 'react';
+import { type Locale, translations } from '@/lib/i18n';
+
+interface NavProps {
+  currentSection: number;
+  onNavigate: (index: number) => void;
+  locale: Locale;
+  setLocale: (locale: Locale) => void;
+}
+
+const Nav: React.FC<NavProps> = ({ currentSection, onNavigate, locale, setLocale }) => {
+  const t = translations[locale];
   
-  const navItems = [
-    { href: "#hero", label: "Hero", key: "hero" },
-    { href: "#essence", label: "Essence", key: "essence" },
-    { href: "#notes", label: "Notes", key: "notes" },
-    { href: "#craft", label: "Craft", key: "craft" },
-    { href: "#bottle", label: "Bottle", key: "bottle" },
-    { href: "#experience", label: "Experience", key: "closing" },
+  // We map the labels to their specific index to ensure alignment with the main slide logic
+  const navLinks = [
+    { label: t.nav.aura, index: 0 },
+    { label: t.nav.notes, index: 1 },
+    { label: t.nav.essence, index: 2 },
+    { label: t.nav.bottle, index: 3 },
+    { label: t.nav.craft, index: 4 },
   ];
 
-  const handleLanguageChange = () => {
-    const newLocale = locale === "ar" ? "en" : "ar";
-    localStorage.setItem("locale", newLocale);
-    window.location.reload();
-  };
-
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-foreground/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">
-            Aura
-          </Link>
-
-          <ul className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <li key={item.key}>
-                <a
-                  href={item.href}
-                  className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <button
-            onClick={handleLanguageChange}
-            className="text-sm font-medium px-3 py-2 rounded-md bg-foreground/10 text-foreground hover:bg-foreground/20 transition-colors duration-200"
+    <nav className="fixed top-0 left-0 w-full z-[100] px-6 md:px-10 py-8 flex justify-between items-center mix-blend-difference">
+      {/* Brand Logo */}
+      <button 
+        className="text-2xl font-bold tracking-[0.3em] uppercase font-serif text-white cursor-pointer hover:opacity-80 transition-opacity"
+        onClick={() => onNavigate(0)}
+      >
+        {t.brand}
+      </button>
+      
+      {/* Desktop Navigation Links */}
+      <div className="hidden md:flex gap-10 text-[9px] uppercase tracking-[0.4em] font-semibold text-white/70 font-sans">
+        {navLinks.map((item) => (
+          <button 
+            key={item.index} 
+            onClick={() => onNavigate(item.index)}
+            className={`
+              hover:text-white transition-all duration-500 relative group 
+              ${currentSection === item.index ? 'text-white' : ''}
+            `}
           >
-            {locale === "ar" ? "EN" : "AR"}
+            {item.label}
+            {/* Animated Underline */}
+            <span 
+              className={`
+                absolute -bottom-2 left-0 h-[1px] bg-white transition-all duration-700 
+                ${currentSection === item.index ? 'w-full' : 'w-0 group-hover:w-full'}
+              `} 
+            />
           </button>
-        </div>
+        ))}
+      </div>
+
+      {/* Language Switcher */}
+      <div className="flex gap-4 items-center font-sans font-semibold">
+        <button 
+          onClick={() => setLocale('en')}
+          className={`
+            text-[9px] uppercase tracking-[0.2em] transition-colors 
+            ${locale === 'en' ? 'text-aura-gold' : 'text-white/40 hover:text-white'}
+          `}
+        >
+          EN
+        </button>
+        
+        <div className="w-[1px] h-3 bg-white/20"></div>
+        
+        <button 
+          onClick={() => setLocale('ar')}
+          className={`
+            text-[10px] uppercase tracking-[0.2em] transition-colors 
+            ${locale === 'ar' ? 'text-aura-gold' : 'text-white/40 hover:text-white'}
+          `}
+        >
+          عربي
+        </button>
       </div>
     </nav>
   );
-}
+};
+
+export default Nav;
